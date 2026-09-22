@@ -1,1 +1,1 @@
-# -O-zQurilish-
+# -O'zQurilish-
