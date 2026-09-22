@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O'zQurilish - O'zbekiston Qurilish Kompaniyalari Portali</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fffbebe',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            dark: '#0f172a',
+                            slate: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hero-pattern {
+            background-color: #0f172a;
+            background-image: radial-gradient(#d97706 0.75px, transparent 0.75px), radial-gradient(#d97706 0.75px, #0f172a 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0,15px 15px;
+            opacity: 0.95;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 bg-amber-500 text-slate-950 px-5 py-3.5 rounded-xl font-semibold shadow-2xl shadow-amber-500/20">
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+        <span id="toast-message">Xabar yuborildi!</span>
+    </div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-amber-500 p-2.5 rounded-xl text-slate-950 shadow-lg shadow-amber-500/20 flex items-center justify-center">
+                        <i data-lucide="building-2" class="w-7 h-7 stroke-[2.5]"></i>
+                    </div>
+                    <div>
+                        <span class="font-heading font-extrabold text-2xl tracking-tight text-white block leading-none">O'z<span class="text-amber-500">Qurilish</span></span>
+                        <span class="text-[10px] text-slate-400 font-medium tracking-widest uppercase block mt-1">O'zbekiston Qurilish Portali</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                    <a href="#katalog" class="hover:text-amber-400 transition-colors">Katalog</a>
+                    <a href="#kalkulyator" class="hover:text-amber-400 transition-colors">Kalkulyator</a>
+                    <a href="#viloyatlar" class="hover:text-amber-400 transition-colors">Viloyatlar</a>
+                    <a href="#biz-haqimizda" class="hover:text-amber-400 transition-colors">Portal haqida</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="hidden sm:flex items-center gap-3">
+                    <button onclick="openModal('addCompanyModal')" class="px-4 py-2.5 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-4 h-4 text-amber-400"></i>
+                        Kompaniya qo'shish
+                    </button>
+                    <button onclick="openModal('quoteModal')" class="px-4 py-2.5 text-xs font-semibold rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/20 transition flex items-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        Pudrat so'rovi
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="flex md:hidden">
+                    <button id="mobileMenuBtn" class="text-slate-300 hover:text-white p-2">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 py-4 space-y-3">
+            <a href="#katalog" class="block text-slate-300 hover:text-amber-400 py-2">Katalog</a>
+            <a href="#kalkulyator" class="block text-slate-300 hover:text-amber-400 py-2">Kalkulyator</a>
+            <a href="#viloyatlar" class="block text-slate-300 hover:text-amber-400 py-2">Viloyatlar</a>
+            <div class="pt-2 flex flex-col gap-2">
+                <button onclick="openModal('addCompanyModal')" class="w-full py-2.5 text-xs font-semibold rounded-xl bg-slate-800 text-slate-200 border border-slate-700">Kompaniya qo'shish</button>
+                <button onclick="openModal('quoteModal')" class="w-full py-2.5 text-xs font-semibold rounded-xl bg-amber-500 text-slate-950 font-bold">Pudrat so'rovi</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative hero-pattern pt-12 pb-20 md:pt-20 md:pb-32 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/80 to-slate-950 pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto space-y-6">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    <span>Sinalgan va Litsenziyalangan Pudratchilar Bazasi</span>
+                </div>
+                <h1 class="font-heading text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                    O'zbekiston Bo'ylab Eng Ishonchli <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600">Qurilish Kompaniyalari</span>
+                </h1>
+                <p class="text-slate-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+                    Turar-joy, biznes markazlari, sanoat va infratuzilma loyihalaringiz uchun tajribali va litsenziyaga ega eng yaxshi pudratchilarni bir joydan toping.
+                </p>
+            </div>
+
+            <!-- SEARCH ENGINE PANEL -->
+            <div class="mt-10 max-w-4xl mx-auto">
+                <div class="glass-panel p-3 sm:p-4 rounded-2xl shadow-2xl space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                        <!-- Keyword Search -->
+                        <div class="sm:col-span-5 relative">
+                            <i data-lucide="search" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="searchInput" placeholder="Kompaniya nomi yoki xizmat..." class="w-full bg-slate-900/90 text-white placeholder-slate-500 text-sm rounded-xl pl-11 pr-4 py-3 border border-slate-700/60 focus:outline-none focus:border-amber-500 transition">
+                        </div>
+
+                        <!-- Region Selector -->
+                        <div class="sm:col-span-4 relative">
+                            <i data-lucide="map-pin" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <select id="regionFilter" class="w-full bg-slate-900/90 text-white text-sm rounded-xl pl-11 pr-8 py-3 border border-slate-700/60 focus:outline-none focus:border-amber-500 appearance-none cursor-pointer transition">
+                                <option value="all">Barcha Viloyatlar</option>
+                                <option value="toshkent">Toshkent shahri</option>
+                                <option value="toshkent-v">Toshkent viloyati</option>
+                                <option value="samarqand">Samarqand</option>
+                                <option value="buxoro">Buxoro</option>
+                                <option value="fargona">Farg'ona</option>
+                                <option value="namangan">Namangan</option>
+                                <option value="andijon">Andijon</option>
+                                <option value="qashqadaryo">Qashqadaryo</option>
+                                <option value="surxondaryo">Surxondaryo</option>
+                                <option value="xorazm">Xorazm</option>
+                                <option value="navoiy">Navoiy</option>
+                                <option value="jizzax">Jizzax</option>
+                                <option value="sirdaryo">Sirdaryo</option>
+                                <option value="qoraqalpogiston">Qoraqalpog'iston R.</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="sm:col-span-3">
+                            <button onclick="applyFilters()" class="w-full h-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
+                                <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+                                Izlash
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUICK STATS -->
+            <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-6 border-t border-slate-800/60 text-center">
+                <div>
+                    <span class="font-heading font-extrabold text-2xl sm:text-3xl text-amber-400 block">350+</span>
+                    <span class="text-xs text-slate-400">Ro'yxatdan o'tgan kompaniyalar</span>
+                </div>
+                <div>
+                    <span class="font-heading font-extrabold text-2xl sm:text-3xl text-white block">14</span>
+                    <span class="text-xs text-slate-400">Hududlar qamrovi</span>
+                </div>
+                <div>
+                    <span class="font-heading font-extrabold text-2xl sm:text-3xl text-amber-400 block">2,400+</span>
+                    <span class="text-xs text-slate-400">Tugatilgan loyihalar</span>
+                </div>
+                <div>
+                    <span class="font-heading font-extrabold text-2xl sm:text-3xl text-white block">98%</span>
+                    <span class="text-xs text-slate-400">Ijobiy baholar</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORY FILTERS & CATALOG -->
+    <section id="katalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1">
+        
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+            <div>
+                <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">Qurilish Kompaniyalari Katalogi</h2>
+                <p class="text-slate-400 text-sm mt-1">Litsenziya, tajriba va mijozlar bahosiga ega eng yetakchi kompaniyalar</p>
+            </div>
+            
+            <!-- Category Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar text-xs font-medium">
+                <button onclick="setCategory('all')" class="category-btn active px-4 py-2 rounded-xl whitespace-nowrap transition bg-amber-500 text-slate-950 font-semibold" data-cat="all">Barchasi</button>
+                <button onclick="setCategory('turar-joy')" class="category-btn px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 whitespace-nowrap transition" data-cat="turar-joy">Turar-joy</button>
+                <button onclick="setCategory('tijorat')" class="category-btn px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 whitespace-nowrap transition" data-cat="tijorat">Tijorat / Ofis</button>
+                <button onclick="setCategory('sanoat')" class="category-btn px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 whitespace-nowrap transition" data-cat="sanoat">Sanoat va Infratuzilma</button>
+                <button onclick="setCategory('tamirlash')" class="category-btn px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 whitespace-nowrap transition" data-cat="tamirlash">Tamirlash & Dizayn</button>
+            </div>
+        </div>
+
+        <!-- Companies Grid -->
+        <div id="companiesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamic JavaScript content injects here -->
+        </div>
+
+        <!-- No Results Found State -->
+        <div id="noResults" class="hidden text-center py-16 bg-slate-900/40 rounded-2xl border border-slate-800">
+            <i data-lucide="building-x" class="w-12 h-12 text-slate-600 mx-auto mb-3"></i>
+            <h3 class="text-lg font-bold text-white">Hech qanday kompaniya topilmadi</h3>
+            <p class="text-slate-400 text-sm mt-1">Qidiruv parametrlari yoki viloyatni o'zgartirib ko'ring.</p>
+            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-slate-800 text-amber-400 text-xs font-semibold rounded-xl border border-slate-700 hover:bg-slate-700 transition">Filtrlarni tiklash</button>
+        </div>
+    </section>
+
+    <!-- PROJECT COST CALCULATOR -->
+    <section id="kalkulyator" class="bg-slate-900/80 border-y border-slate-800 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-semibold">
+                        <i data-lucide="calculator" class="w-4 h-4"></i>
+                        <span>Tezkor Smeta Kalkulyatori</span>
+                    </div>
+                    <h2 class="font-heading text-3xl font-extrabold text-white">Loyihangiz taxminiy qiymatini hisoblang</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Qurilish turi va umumiy maydonini kiriting. Tizimimiz O'zbekistondagi o'rtacha bozor narxlari asosida taxminiy smetani chiqaradi va mos kompaniyalarni tavsiya qiladi.
+                    </p>
+                    <ul class="space-y-2.5 text-xs text-slate-300 pt-2">
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check-circle2" class="w-4 h-4 text-amber-400"></i>
+                            Qora suvagidan to tayyor kalitgacha smeta
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check-circle2" class="w-4 h-4 text-amber-400"></i>
+                            Material va ishchi kuchi hisob-kitobi
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check-circle2" class="w-4 h-4 text-amber-400"></i>
+                            Pudratchilardan to'g'ridan-to'g'ri tijorat taklifi olish
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="lg:col-span-7">
+                    <div class="bg-slate-950 p-6 sm:p-8 rounded-2xl border border-slate-800 shadow-xl space-y-6">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Building Type -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-2">Qurilish Turi</label>
+                                <select id="calcType" class="w-full bg-slate-900 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                                    <option value="180">Hovli / Kottedj (Poydevordan kalitgacha)</option>
+                                    <option value="220">Ko'p qavatli bino (Karkas qurilish)</option>
+                                    <option value="150">Sanoat omborxonasi / Angar</option>
+                                    <option value="90">Ichki Tamirlash va Dizayn</option>
+                                </select>
+                            </div>
+
+                            <!-- Quality Grade -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-2">Sifat Toifasi</label>
+                                <select id="calcGrade" class="w-full bg-slate-900 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                                    <option value="1.0">Standart (Ekonom)</option>
+                                    <option value="1.3">Biznes (Sifatli materiallar)</option>
+                                    <option value="1.75">Premium / Lyuks klass</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Area Slider -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-semibold text-slate-300">Umumiy maydon (kv.m)</label>
+                                <span id="areaValue" class="text-amber-400 font-bold text-sm">150 kv.m</span>
+                            </div>
+                            <input type="range" id="calcArea" min="30" max="2000" value="150" step="10" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                <span>30 kv.m</span>
+                                <span>1,000 kv.m</span>
+                                <span>2,000 kv.m</span>
+                            </div>
+                        </div>
+
+                        <!-- Calculation Output -->
+                        <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div>
+                                <span class="text-slate-400 text-xs block">Taxminiy smeta miqdori:</span>
+                                <span id="calcResult" class="font-heading text-2xl sm:text-3xl font-extrabold text-amber-400">$27,000 - $32,000</span>
+                                <span class="text-[10px] text-slate-500 block mt-0.5">*Material va qurilish xizmati kiritilgan</span>
+                            </div>
+                            <button onclick="requestCalcQuote()" class="w-full sm:w-auto px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-500/20 whitespace-nowrap transition">
+                                Takliflarni olish
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- REGIONS MAP / SELECTOR -->
+    <section id="viloyatlar" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">Hududlar Bo'yicha Kompaniyalar</h2>
+            <p class="text-slate-400 text-sm mt-2">O'zbekistonning istalgan viloyatidagi faol pudratchilar va loyiha tashkilotlarini toping</p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+            <button onclick="filterByRegionName('toshkent')" class="region-card p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                <i data-lucide="building" class="w-5 h-5 text-amber-400 mx-auto mb-2 group-hover:scale-110 transition"></i>
+                <span class="text-xs font-semibold text-slate-200 block">Toshkent sh.</span>
+                <span class="text-[10px] text-slate-500">140+ kompaniya</span>
+            </button>
+            <button onclick="filterByRegionName('samarqand')" class="region-card p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                <i data-lucide="landmark" class="w-5 h-5 text-amber-400 mx-auto mb-2 group-hover:scale-110 transition"></i>
+                <span class="text-xs font-semibold text-slate-200 block">Samarqand</span>
+                <span class="text-[10px] text-slate-500">45+ kompaniya</span>
+            </button>
+            <button onclick="filterByRegionName('fargona')" class="region-card p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                <i data-lucide="factory" class="w-5 h-5 text-amber-400 mx-auto mb-2 group-hover:scale-110 transition"></i>
+                <span class="text-xs font-semibold text-slate-200 block">Farg'ona</span>
+                <span class="text-[10px] text-slate-500">32+ kompaniya</span>
+            </button>
+            <button onclick="filterByRegionName('buxoro')" class="region-card p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                <i data-lucide="castle" class="w-5 h-5 text-amber-400 mx-auto mb-2 group-hover:scale-110 transition"></i>
+                <span class="text-xs font-semibold text-slate-200 block">Buxoro</span>
+                <span class="text-[10px] text-slate-500">28+ kompaniya</span>
+            </button>
+            <button onclick="filterByRegionName('namangan')" class="region-card p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                <i data-lucide="hard-hat" class="w-5 h-5 text-amber-400 mx-auto mb-2 group-hover:scale-110 transition"></i>
+                <span class="text-xs font-semibold text-slate-200 block">Namangan</span>
+                <span class="text-[10px] text-slate-500">25+ kompaniya</span>
+            </button>
+            <button onclick="filterByRegionName('andijon')" class="region-card p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                <i data-lucide="truck" class="w-5 h-5 text-amber-400 mx-auto mb-2 group-hover:scale-110 transition"></i>
+                <span class="text-xs font-semibold text-slate-200 block">Andijon</span>
+                <span class="text-[10px] text-slate-500">22+ kompaniya</span>
+            </button>
+            <button onclick="filterByRegionName('all')" class="region-card p-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-center transition group">
+                <i data-lucide="globe" class="w-5 h-5 text-amber-400 mx-auto mb-2 group-hover:scale-110 transition"></i>
+                <span class="text-xs font-bold text-amber-400 block">Barchasi</span>
+                <span class="text-[10px] text-amber-300">14 hudud</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 mt-auto pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12 border-b border-slate-800/80">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-amber-500 p-2 rounded-lg text-slate-950">
+                            <i data-lucide="building-2" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-heading font-bold text-xl text-white">O'z<span class="text-amber-500">Qurilish</span></span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        O'zbekiston bo'ylab qurilish sohasi vakillari, buyurtmachilar hamda pudratchilar uchun yagona milliy axborot portali.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-3">Bo'limlar</h4>
+                    <ul class="space-y-2 text-xs text-slate-400">
+                        <li><a href="#katalog" class="hover:text-amber-400">Kompaniyalar Katalogi</a></li>
+                        <li><a href="#kalkulyator" class="hover:text-amber-400">Smeta Kalkulyatori</a></li>
+                        <li><a href="#viloyatlar" class="hover:text-amber-400">Hududlar Ro'yxati</a></li>
+                        <li><a href="#" onclick="openModal('quoteModal')" class="hover:text-amber-400">Pudrat So'rovi Berish</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-3">Kompaniyalarga</h4>
+                    <ul class="space-y-2 text-xs text-slate-400">
+                        <li><a href="#" onclick="openModal('addCompanyModal')" class="hover:text-amber-400">Katalogga Qo'shilish</a></li>
+                        <li><a href="#" class="hover:text-amber-400">Litsenziya va Sertifikatlash</a></li>
+                        <li><a href="#" class="hover:text-amber-400">Reklama va Hamkorlik</a></li>
+                        <li><a href="#" class="hover:text-amber-400">Tenderlar</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-3">Aloqa</h4>
+                    <ul class="space-y-2 text-xs text-slate-400">
+                        <li class="flex items-center gap-2"><i data-lucide="phone" class="w-3.5 h-3.5 text-amber-400"></i> +998 (71) 200-00-00</li>
+                        <li class="flex items-center gap-2"><i data-lucide="mail" class="w-3.5 h-3.5 text-amber-400"></i> info@ozqurilish.uz</li>
+                        <li class="flex items-center gap-2"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i> Toshkent sh., Amir Temur shoh ko'chasi 108</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+                <p>© 2026 O'zQurilish Portali. Barcha huquqlar himoyalangan.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-slate-400">Maxfiylik siyosati</a>
+                    <a href="#" class="hover:text-slate-400">Foydalanish shartlari</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS SECTION -->
+
+    <!-- COMPANY DETAILS MODAL -->
+    <div id="companyDetailModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-3xl rounded-2xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl relative">
+            <button onclick="closeModal('companyDetailModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 z-10">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div id="companyModalContent">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PUDRAT SO'ROVI (GET QUOTE) MODAL -->
+    <div id="quoteModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+            <button onclick="closeModal('quoteModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="mb-6">
+                <h3 class="font-heading text-xl font-bold text-white">Qurilish va Pudrat So'rovi</h3>
+                <p class="text-slate-400 text-xs mt-1">Loyiha ma'lumotlarini qoldiring va mos kompaniyalardan tijorat takliflarini oling</p>
+            </div>
+
+            <form onsubmit="handleQuoteSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Ismingiz / Kompaniya Nomi</label>
+                    <input type="text" required placeholder="Masalan: Sardor Rahimov" class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Telefon Raqamingiz</label>
+                    <input type="tel" required placeholder="+998 (90) 123-45-67" class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Loyiha Hududi</label>
+                        <select class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                            <option>Toshkent sh.</option>
+                            <option>Samarqand</option>
+                            <option>Buxoro</option>
+                            <option>Farg'ona</option>
+                            <option>Boshqa viloyat</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Qurilish Turi</label>
+                        <select class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                            <option>Turar-joy</option>
+                            <option>Tijorat binosi</option>
+                            <option>Tamirlash & Dizayn</option>
+                            <option>Sanoat ob'ekti</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Loyiha Haqida Qisqacha</label>
+                    <textarea rows="3" placeholder="Masalan: 3 qavatli kottedj poydevori va karkas qurilishi, 250 kv.m..." class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm rounded-xl transition shadow-lg shadow-amber-500/20">
+                    So'rovni Yuborish
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD COMPANY MODAL -->
+    <div id="addCompanyModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeModal('addCompanyModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="mb-6">
+                <h3 class="font-heading text-xl font-bold text-white">Kompaniyangizni Katalogga Qo'shing</h3>
+                <p class="text-slate-400 text-xs mt-1">Minglab yangi buyurtmachilar va pudrat shartnomalariga ega bo'ling</p>
+            </div>
+
+            <form onsubmit="handleAddCompanySubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Kompaniya Nomi</label>
+                    <input type="text" required placeholder="Masalan: Samarkand Grand Build MChJ" class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Asosiy Hudud</label>
+                        <select id="newCompRegion" class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                            <option value="toshkent">Toshkent sh.</option>
+                            <option value="samarqand">Samarqand</option>
+                            <option value="buxoro">Buxoro</option>
+                            <option value="fargona">Farg'ona</option>
+                            <option value="namangan">Namangan</option>
+                            <option value="andijon">Andijon</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Yo'nalish</label>
+                        <select id="newCompCat" class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                            <option value="turar-joy">Turar-joy</option>
+                            <option value="tijorat">Tijorat / Ofis</option>
+                            <option value="sanoat">Sanoat</option>
+                            <option value="tamirlash">Tamirlash & Dizayn</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Tajriba (Yil)</label>
+                        <input type="number" required placeholder="Masalan: 8" class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Aloqa Telefoni</label>
+                        <input type="tel" required placeholder="+998 (90) 000-00-00" class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Litsenziya Raqami va Tavsif</label>
+                    <textarea rows="3" placeholder="Litsenziya seriyasi, bajarilgan yirik loyihalar..." class="w-full bg-slate-950 text-white text-sm rounded-xl p-3 border border-slate-800 focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm rounded-xl transition shadow-lg shadow-amber-500/20">
+                    Ariza Topshirish
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // MOCK DATA - UZBEKISTAN CONSTRUCTION COMPANIES
+        const mockCompanies = [
+            {
+                id: 1,
+                name: "Discover Invest",
+                logo: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=150&auto=format&fit=crop&q=80",
+                cover: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=80",
+                region: "toshkent",
+                regionLabel: "Toshkent shahri",
+                category: "turar-joy",
+                categoryLabel: "Turar-joy & Tijorat",
+                rating: 4.9,
+                reviewsCount: 128,
+                experienceYears: 14,
+                completedProjects: 85,
+                verified: true,
+                license: "Q-08471/2018-L",
+                phone: "+998 71 200-88-88",
+                description: "O'zbekistondagi eng yirik developer va general pudratchi kompaniyalardan biri. Premium klassdagi turar-joy majmualari va biznes markazlar qurilishi.",
+                services: ["Monolit Karkas", "Kalitgacha Qurilish", "Arxitektura Loyihalash", "Sanoat Ob'ektlari"],
+                projects: [
+                    "Tashkent City Lotus Tower",
+                    "Boulevard Turar-joy Majmuasi",
+                    "Akay City Biznes Markazi"
+                ]
+            },
+            {
+                id: 2,
+                name: "Enter Engineering",
+                logo: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=150&auto=format&fit=crop&q=80",
+                cover: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop&q=80",
+                region: "toshkent",
+                regionLabel: "Toshkent / Sanoat",
+                category: "sanoat",
+                categoryLabel: "Sanoat & Infratuzilma",
+                rating: 4.8,
+                reviewsCount: 94,
+                experienceYears: 18,
+                completedProjects: 140,
+                verified: true,
+                license: "S-10294/2015-L",
+                phone: "+998 71 202-00-11",
+                description: "Markaziy Osiyodagi eng yirik EPC-pudratchilardan biri. Neft-gaz, kimyo, metallurgiya va yirik infratuzilma inshootlari qurilishiga ixtisoslashgan.",
+                services: ["EPC Pudrat", "Sanoat Infratuzilmasi", "Yo'l va Ko'priklar", "Yog'och va Metall Konstruktsiya"],
+                projects: [
+                    "GTL Neftni Qayta Ishlash Zavodi",
+                    "Olimpiya Shaharchasi Ob'ektlari",
+                    "Toshkent Aeroporti Yangi Terminali"
+                ]
+            },
+            {
+                id: 3,
+                name: "Samarqand Qurilish Servis",
+                logo: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=150&auto=format&fit=crop&q=80",
+                cover: "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?w=800&auto=format&fit=crop&q=80",
+                region: "samarqand",
+                regionLabel: "Samarqand viloyati",
+                category: "turar-joy",
+                categoryLabel: "Turar-joy & Kottedj",
+                rating: 4.7,
+                reviewsCount: 62,
+                experienceYears: 10,
+                completedProjects: 42,
+                verified: true,
+                license: "Q-03821/2020-L",
+                phone: "+998 66 230-12-34",
+                description: "Samarqand shahrida zamonaviy kottedjlar, ko'p qavatli binolar hamda milliy va zamonaviy uslubdagi mehmonxonalar qurilishi.",
+                services: ["Kottedjlar Qurilishi", "Mehmonxona Komplekslari", "Landshaft Dizayn", "Marmar va Tosh Ishlovi"],
+                projects: [
+                    "Registon Plaza Mehmonxonasi",
+                    "Silk Road Samarkand Kottedjlar",
+                    "Afrosiyob City Turar-joy"
+                ]
+            },
+            {
+                id: 4,
+                name: "Bukhara Elite Build",
+                logo: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?w=150&auto=format&fit=crop&q=80",
+                cover: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop&q=80",
+                region: "buxoro",
+                regionLabel: "Buxoro viloyati",
+                category: "tijorat",
+                categoryLabel: "Tijorat & Restavratsiya",
+                rating: 4.9,
+                reviewsCount: 48,
+                experienceYears: 12,
+                completedProjects: 38,
+                verified: true,
+                license: "B-09123/2019-L",
+                phone: "+998 65 221-55-44",
+                description: "Tarixiy ob'ektlar restavratsiyasi hamda Buxoro bo'ylab zamonaviy savdo markazlari va brend do'konlar qurilish pudratchisi.",
+                services: ["Tijorat Ob'ektlari", "Tarixiy Ob'ektlar Restavratsiyasi", "Fasad Ishlari", "Yevro Tamir"],
+                projects: [
+                    "Buxoro Savdo Kompleksi",
+                    "Ancient Buxoro Boutique Hotel",
+                    "Kogon Sanoat Ombori"
+                ]
+            },
+            {
+                id: 5,
+                name: "Fergana Valley Builders",
+                logo: "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=150&auto=format&fit=crop&q=80",
+                cover: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&auto=format&fit=crop&q=80",
+                region: "fargona",
+                regionLabel: "Farg'ona / Vodiy",
+                category: "tamirlash",
+                categoryLabel: "Tamirlash & Dizayn",
+                rating: 4.6,
+                reviewsCount: 39,
+                experienceYears: 8,
+                completedProjects: 54,
+                verified: false,
+                license: "F-04312/2021-L",
+                phone: "+998 73 244-11-22",
+                description: "Farg'ona vodiysi bo me'moriy loyihalash, xonadonlar va ofislarni kapital tamirlash hamda interyer dizayni.",
+                services: ["Interyer Dizayn", "Kapital Tamirlash", "Santexnika va Elektr", "Isitish Tizimlari"],
+                projects: [
+                    "Farg'ona IT Park Interior",
+                    "Quvasoy Kottedjlar Majmuasi",
+                    "Qo'qon Savdo Do'konlari"
+                ]
+            },
+            {
+                id: 6,
+                name: "Namangan Grand Construction",
+                logo: "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?w=150&auto=format&fit=crop&q=80",
+                cover: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=800&auto=format&fit=crop&q=80",
+                region: "namangan",
+                regionLabel: "Namangan viloyati",
+                category: "turar-joy",
+                categoryLabel: "Turar-joy & Sanoat",
+                rating: 4.7,
+                reviewsCount: 51,
+                experienceYears: 9,
+                completedProjects: 31,
+                verified: true,
+                license: "N-08129/2020-L",
+                phone: "+998 69 227-99-00",
+                description: "Namangan shahri va tumanlarida shinam ko'p qavatli uylar hamda to'qimachilik fabrikalari angarlarini barpo etish.",
+                services: ["Ko'p Qavatli Uylar", "Tekstil Fabrika Angarlari", "Beton va Poydevor", "Kanalizatsiya va Muhandislik"],
+                projects: [
+                    "Namangan City Residential",
+                    "Chust Tekstil Omborxonasi",
+                    "Pop Yo'l Infratuzilmasi"
+                ]
+            }
+        ];
+
+        // STATE MANAGEMENT
+        let currentCategory = 'all';
+        let currentRegion = 'all';
+        let currentSearchQuery = '';
+
+        // DOM ELEMENTS
+        const companiesContainer = document.getElementById('companiesContainer');
+        const noResults = document.getElementById('noResults');
+        const searchInput = document.getElementById('searchInput');
+        const regionFilter = document.getElementById('regionFilter');
+
+        // INITIALIZE APP
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCompanies();
+            setupCalculator();
+            lucide.createIcons();
+
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        });
+
+        // RENDER COMPANIES GRID
+        function renderCompanies() {
+            const filtered = mockCompanies.filter(comp => {
+                const matchesCategory = currentCategory === 'all' || comp.category === currentCategory;
+                const matchesRegion = currentRegion === 'all' || comp.region === currentRegion;
+                const matchesSearch = comp.name.toLowerCase().includes(currentSearchQuery.toLowerCase()) || 
+                                      comp.description.toLowerCase().includes(currentSearchQuery.toLowerCase()) ||
+                                      comp.services.some(s => s.toLowerCase().includes(currentSearchQuery.toLowerCase()));
+
+                return matchesCategory && matchesRegion && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                companiesContainer.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            companiesContainer.innerHTML = filtered.map(comp => `
+                <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-amber-500/5 flex flex-col group">
+                    
+                    <!-- Cover Image & Badge -->
+                    <div class="relative h-44 overflow-hidden bg-slate-800">
+                        <img src="${comp.cover}" alt="${comp.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                        
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-[11px] font-semibold text-slate-200 border border-slate-700/60 flex items-center gap-1">
+                                <i data-lucide="map-pin" class="w-3 h-3 text-amber-400"></i>
+                                ${comp.regionLabel}
+                            </span>
+                        </div>
+
+                        ${comp.verified ? `
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-amber-500/90 text-slate-950 font-bold text-[10px] tracking-wide uppercase shadow-md flex items-center gap-1">
+                                <i data-lucide="badge-check" class="w-3.5 h-3.5"></i>
+                                Sinalgan
+                            </span>
+                        ` : ''}
+
+                        <!-- Company Logo -->
+                        <div class="absolute -bottom-4 left-5 w-14 h-14 rounded-xl border-2 border-slate-900 overflow-hidden bg-slate-950 shadow-lg">
+                            <img src="${comp.logo}" alt="${comp.name}" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-5 pt-7 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-white group-hover:text-amber-400 transition">${comp.name}</h3>
+                                    <p class="text-xs text-slate-400 mt-0.5">${comp.categoryLabel}</p>
+                                </div>
+                                <div class="flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20">
+                                    <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-amber-400"></i>
+                                    <span class="text-xs font-bold text-amber-400">${comp.rating}</span>
+                                    <span class="text-[10px] text-slate-500">(${comp.reviewsCount})</span>
+                                </div>
+                            </div>
+
+                            <p class="text-slate-400 text-xs mt-3 line-clamp-2 leading-relaxed">
+                                ${comp.description}
+                            </p>
+
+                            <!-- Service Badges -->
+                            <div class="flex flex-wrap gap-1.5 mt-4">
+                                ${comp.services.slice(0, 3).map(serv => `
+                                    <span class="text-[10px] bg-slate-950 text-slate-300 px-2.5 py-1 rounded-md border border-slate-800">
+                                        ${serv}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Stats Footer -->
+                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                            <div class="flex gap-4">
+                                <div>
+                                    <span class="text-slate-200 font-bold block">${comp.experienceYears} yil</span>
+                                    <span class="text-[10px] text-slate-500">Tajriba</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-200 font-bold block">${comp.completedProjects}+</span>
+                                    <span class="text-[10px] text-slate-500">Loyihalar</span>
+                                </div>
+                            </div>
+
+                            <button onclick="openCompanyModal(${comp.id})" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-semibold transition border border-slate-700 hover:border-amber-500">
+                                Batafsil
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // FILTER FUNCTIONS
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.dataset.cat === cat) {
+                    btn.className = "category-btn active px-4 py-2 rounded-xl whitespace-nowrap transition bg-amber-500 text-slate-950 font-semibold";
+                } else {
+                    btn.className = "category-btn px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 whitespace-nowrap transition";
+                }
+            });
+            renderCompanies();
+        }
+
+        function applyFilters() {
+            currentSearchQuery = searchInput.value;
+            currentRegion = regionFilter.value;
+            renderCompanies();
+        }
+
+        function filterByRegionName(reg) {
+            regionFilter.value = reg;
+            currentRegion = reg;
+            renderCompanies();
+            document.getElementById('katalog').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetFilters() {
+            currentCategory = 'all';
+            currentRegion = 'all';
+            currentSearchQuery = '';
+            searchInput.value = '';
+            regionFilter.value = 'all';
+            setCategory('all');
+            renderCompanies();
+        }
+
+        // CALCULATOR LOGIC
+        function setupCalculator() {
+            const calcArea = document.getElementById('calcArea');
+            const areaValue = document.getElementById('areaValue');
+            const calcType = document.getElementById('calcType');
+            const calcGrade = document.getElementById('calcGrade');
+            const calcResult = document.getElementById('calcResult');
+
+            function updateCalc() {
+                const area = parseInt(calcArea.value);
+                const basePrice = parseInt(calcType.value);
+                const gradeMultiplier = parseFloat(calcGrade.value);
+
+                areaValue.textContent = `${area} kv.m`;
+
+                const totalEstMin = Math.round(area * basePrice * gradeMultiplier * 0.9);
+                const totalEstMax = Math.round(area * basePrice * gradeMultiplier * 1.15);
+
+                calcResult.textContent = `$${totalEstMin.toLocaleString()} - $${totalEstMax.toLocaleString()}`;
+            }
+
+            calcArea.addEventListener('input', updateCalc);
+            calcType.addEventListener('change', updateCalc);
+            calcGrade.addEventListener('change', updateCalc);
+            updateCalc();
+        }
+
+        function requestCalcQuote() {
+            openModal('quoteModal');
+        }
+
+        // DYNAMIC COMPANY MODAL SHOW
+        function openCompanyModal(id) {
+            const comp = mockCompanies.find(c => c.id === id);
+            if (!comp) return;
+
+            const modalContent = document.getElementById('companyModalContent');
+            modalContent.innerHTML = `
+                <!-- Header Cover -->
+                <div class="relative h-56 bg-slate-800">
+                    <img src="${comp.cover}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
+                    <div class="absolute -bottom-6 left-6 w-20 h-20 rounded-2xl border-4 border-slate-900 overflow-hidden bg-slate-950 shadow-xl">
+                        <img src="${comp.logo}" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6 pt-10 space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="font-heading font-extrabold text-2xl text-white">${comp.name}</h2>
+                                ${comp.verified ? `<i data-lucide="badge-check" class="w-5 h-5 text-amber-400"></i>` : ''}
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">${comp.regionLabel} • Litsenziya: <span class="text-slate-300 font-mono">${comp.license}</span></p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800 p-3 rounded-xl border border-slate-700">
+                            <i data-lucide="star" class="w-5 h-5 text-amber-400 fill-amber-400"></i>
+                            <div>
+                                <span class="font-bold text-white text-sm block leading-none">${comp.rating} / 5.0</span>
+                                <span class="text-[10px] text-slate-400">${comp.reviewsCount} ta izoh</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Kompaniya haqida</h4>
+                        <p class="text-slate-300 text-sm leading-relaxed">${comp.description}</p>
+                    </div>
+
+                    <!-- Services Provided -->
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Ko'rsatiladigan Xizmatlar</h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-2 gap-2">
+                            ${comp.services.map(s => `
+                                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-center gap-2">
+                                    <i data-lucide="check" class="w-4 h-4 text-amber-400"></i>
+                                    ${s}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Known Projects -->
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Bajarilgan Mashhur Loyihalar</h4>
+                        <ul class="space-y-2">
+                            ${comp.projects.map(p => `
+                                <li class="text-xs text-slate-300 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex items-center justify-between">
+                                    <span class="font-semibold">${p}</span>
+                                    <span class="text-[10px] text-amber-400 font-medium">Bajarilgan</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
+                        <a href="tel:${comp.phone}" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                            Qo'ng'iroq qilish (${comp.phone})
+                        </a>
+                        <button onclick="closeModal('companyDetailModal'); openModal('quoteModal')" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs rounded-xl transition border border-slate-700 flex items-center justify-center gap-2">
+                            <i data-lucide="send" class="w-4 h-4 text-amber-400"></i>
+                            Pudrat taklifi so'rash
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            lucide.createIcons();
+            openModal('companyDetailModal');
+        }
+
+        // MODAL HELPERS
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // FORM SUBMISSIONS & TOAST
+        function handleQuoteSubmit(e) {
+            e.preventDefault();
+            closeModal('quoteModal');
+            showToast("Pudrat so'rovingiz qabul qilindi! Kompaniyalar siz bilan bog'lanishadi.");
+        }
+
+        function handleAddCompanySubmit(e) {
+            e.preventDefault();
+            closeModal('addCompanyModal');
+            showToast("Arizangiz moderatsiyaga yuborildi. Tez orada tekshirib tasdiqlaymiz.");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = msg;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
